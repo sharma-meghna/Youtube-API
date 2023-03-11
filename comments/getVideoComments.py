@@ -1,9 +1,11 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Sample Python code for youtube.comments.list
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/code-samples#python
 import os
+import sys
 import googleapiclient.discovery
 
 def main():
@@ -20,7 +22,7 @@ def main():
 
     request = youtube.commentThreads().list(
         part="snippet,replies",
-        videoId=input("Please enter your video id")
+        videoId=sys.argv[1]
     )
     response = request.execute()
     for i in response["items"]:
