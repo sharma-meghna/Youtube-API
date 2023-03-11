@@ -4,7 +4,6 @@
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/code-samples#python
 import os
-
 import googleapiclient.discovery
 
 def main():
@@ -21,7 +20,7 @@ def main():
 
     request = youtube.commentThreads().list(
         part="snippet,replies",
-        videoId="leIBotETLI4"
+        videoId=input("Please enter your video id")
     )
     response = request.execute()
     for i in response["items"]:
