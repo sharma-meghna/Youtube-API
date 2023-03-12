@@ -19,11 +19,16 @@ def main():
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey = DEVELOPER_KEY)
-
-    request = youtube.commentThreads().list(
-        part="snippet,replies",
-        videoId=sys.argv[1]
-    )
+    if len(sys.argv)>1:
+        request = youtube.commentThreads().list(
+            part="snippet,replies",
+            videoId=sys.argv[1]
+        )
+    else:
+        request = youtube.commentThreads().list(
+            part="snippet,replies",
+            videoId = input('Print enter videoid- ')
+        )
     response = request.execute()
     for i in response["items"]:
        print (f'{i["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"]} says - {i["snippet"]["topLevelComment"]["snippet"]["textOriginal"]}')
