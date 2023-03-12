@@ -5,6 +5,8 @@
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/code-samples#python
 import argparse
+import re
+from urllib.parse import urlparse
 import os
 import sys
 import googleapiclient.discovery
@@ -15,17 +17,27 @@ def main():
     parser = argparse.ArgumentParser(
         description='Get comments from videoId',
     )
-    parser.add_argument("-v", "--videoid", type=str, help="your videoid", required=True)
+    parser.add_argument("-v", "--videoid", type=str, help="your videoid or video link", required=True)
     parser.add_argument("-n", "--maxResults", default=20, type=int, help="max number of comments to fetch")
     opts = parser.parse_args()
+    url_data = urlparse(opts.videoid)
 
-    VIDEO_ID = opts.videoid
+    VIDEO_ID = ""
+    if url_data.query:
+        result = re.search(r".*v=(.*?)(&|$)", url_data.query)    
+        VIDEO_ID = result.group(1)
+    else :
+        VIDEO_ID = url_data.path.split("/")[-1]
 
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyAW6KLj4LiBLn-FucxwlNzZY2K_RSeiOdk"
+
+    DEVELOPER_KEY = os.getenv("GOOGLE_DEVELOPER_API_KEY", default=None)
+    if DEVELOPER_KEY == None:
+        print ("Error: Developer key not found")
+        sys.exit(1)
 
     totalReplyCount = 0
     count = 0
