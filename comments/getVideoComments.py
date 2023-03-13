@@ -19,6 +19,7 @@ def main():
     )
     parser.add_argument("-v", "--videoid", type=str, help="your videoid or video link", required=True)
     parser.add_argument("-n", "--maxResults", default=20, type=int, help="max number of comments to fetch")
+    parser.add_argument("-r", "--replies", action="store_true", help="get replies to comments")
     opts = parser.parse_args()
     url_data = urlparse(opts.videoid)
 
@@ -54,8 +55,11 @@ def main():
     while (True):        
         for i in response["items"]:
             print (f'{i["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"]} says - {i["snippet"]["topLevelComment"]["snippet"]["textOriginal"]}')
-            totalReplyCount = totalReplyCount + i["snippet"]["totalReplyCount"]
             count += 1
+            if (i["snippet"]["totalReplyCount"] and opts.replies):
+                for j in i["replies"]["comments"]:
+                    print (f'{j["snippet"]["authorDisplayName"]} replied - {j["snippet"]["textOriginal"]}')
+                totalReplyCount = totalReplyCount + i["snippet"]["totalReplyCount"]
         if ("nextPageToken" not in response) or count >= opts.maxResults:
             break
         remaining = opts.maxResults - count
@@ -69,6 +73,7 @@ def main():
         response = request.execute()
    
     print (f'Total Comments - ', (count))
+    print (f'Total Replies - ', (totalReplyCount))
 
 if __name__ == "__main__":
     main()
